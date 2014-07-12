@@ -13,7 +13,7 @@ set /p source="Source video file : "
 set /p output="Output filename : "
 REM set /p extension="Which format? MP4 or MKV : "
 set extension=mkv
-set /p bitrate="Set Bitrate Kbps : "
+set /p quality="Set Quality Biterate Kbps : "
 echo.
 echo -------------------------------------------------
 echo.
@@ -21,7 +21,7 @@ echo.
 set extstate=false
 if /i "%source%" == "" GOTO error
 if /i "%output%" == "" GOTO error
-if /i "%bitrate%" == "" GOTO error
+if /i "%quality%" == "" GOTO error
 if /i "%extension%" == "" GOTO error
 REM if /i "%extension%" == "mp4" set extstate=true
 if /i "%extension%" == "mkv" set extstate=true
@@ -47,9 +47,9 @@ REM x264.exe --pass 1 --level 4.1 --stats .stats --bitrate %bitrate% --no-mbtree
 REM x264.exe --pass 2 --level 4.1 --stats .stats --bitrate %bitrate% --no-mbtree --keyint 24 --min-keyint 2 --threads auto --bframes 3 --me umh --ref 4 --subme 7 --direct auto --sar 1:1 --b-pyramid strict --partitions p8x8,b8x8,i4x4,i8x8 --8x8dct --vbv-bufsize 30000 --vbv-maxrate 38000 --weightb --mixed-refs --mvrange 511 --aud --trellis 1 --analyse all --output "%cd%\%output%.%extension%" "%cd%\%source%"
 
 
-ffmpeg -i %cd%\%source% -an -vcodec libx264 -pass 1 -profile:v high -level 4.1 -preset veryslow -threads 0 -b:v %bitrate%k -x264opts frameref=15:fast_pskip=0 -f rawvideo -y nul
+ffmpeg -i %cd%\%source% -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=1:fast_pskip=0:keyint=24:min-keyint=2:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid:partitions=none:no-dct-decimate -f rawvideo -y NUL
 
-ffmpeg -i "%cd%\%source%" -acodec libvo_aacenc -ab 256k -ar 96000 -vcodec libx264 -pass 2 -profile:v high -level 4.1 -preset veryslow -threads 0 -b:v %bitrate%k -x264opts frameref=15:fast_pskip=0 "%cd%\%output%.%extension%"
+ffmpeg -i %cd%\%source% -acodec libvo_aacenc -ab 256k -ar 96000 -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=4:fast_pskip=0:keyint=24:min-keyint=2:me=umh:trellis=1:bframes=3:subme=7:vbv-maxrate=40000:vbv-bufsize=30000:direct=auto:b-pyramid:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange %cd%\%output%.%extension%
 
 GOTO completed
 
