@@ -12,6 +12,7 @@ echo.
 set /p source="Source video file : "
 set /p output="Output filename : "
 set /p extension="Which format? MP4 or MKV : "
+set /p bitrate="Set Bitrate Kbps : "
 echo.
 echo -------------------------------------------------
 echo.
@@ -19,6 +20,7 @@ echo.
 set extstate=false
 if /i "%source%" == "" GOTO error
 if /i "%output%" == "" GOTO error
+if /i "%bitrate%" == "" GOTO error
 if /i "%extension%" == "" GOTO error
 if /i "%extension%" == "mp4" set extstate=true
 if /i "%extension%" == "mkv" set extstate=true
@@ -39,9 +41,9 @@ echo.
 
 pause
 
-x264.exe --pass 1 --level 4.1 --stats .stats --bitrate %bitrate --no-mbtree --keyint 24 --min-keyint 2 --threads auto --bframes 3 --me dia --ref 1 --subme 3 --direct auto --sar 1:1 --b-pyramid strict --partitions none --no-dct-decimate --output NUL "%cd%\%source%"
+x264.exe --pass 1 --level 4.1 --stats .stats --bitrate %bitrate% --no-mbtree --keyint 24 --min-keyint 2 --threads auto --bframes 3 --me dia --ref 1 --subme 3 --direct auto --sar 1:1 --b-pyramid strict --partitions none --no-dct-decimate --output NUL %cd%\%source%
 
-x264.exe --pass 2 --level 4.1 --stats .stats --bitrate %bitrate --no-mbtree --keyint 24 --min-keyint 2 --threads auto --bframes 3 --me umh --ref 4 --subme 7 --direct auto --sar 1:1 --b-pyramid strict --partitions p8x8,b8x8,i4x4,i8x8 --8x8dct --vbv-bufsize 30000 --vbv-maxrate 38000 --weightb --mixed-refs --mvrange 511 --aud --trellis 1 --analyse all --output "%cd%\%output%.%extension%" "%cd%\%source%"
+x264.exe --pass 2 --level 4.1 --stats .stats --bitrate %bitrate% --no-mbtree --keyint 24 --min-keyint 2 --threads auto --bframes 3 --me umh --ref 4 --subme 7 --direct auto --sar 1:1 --b-pyramid strict --partitions p8x8,b8x8,i4x4,i8x8 --8x8dct --vbv-bufsize 30000 --vbv-maxrate 38000 --weightb --mixed-refs --mvrange 511 --aud --trellis 1 --analyse all --output "%cd%\%output%.%extension%" "%cd%\%source%"
 
 GOTO completed
 
