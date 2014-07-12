@@ -1,22 +1,30 @@
 @echo off
 :start
 echo ============================================================================
+echo.
 echo 	High Compression Video Converter x264-MKV/MP4
 echo 	Version 0.7 by Kevin C.H.I.
+echo.
 echo ============================================================================
 echo.
-echo SETTING
+echo  SETTING
 echo.
-echo Current Directory : %cd%
+echo  Current Directory : %cd%
 echo.
-set /p source="- STEP 1: Source video file > "
+set /p source="-STEP 1: Source video file > "
 echo.
-set /p output="- STEP 2: Output filename > "
+set /p output="-STEP 2: Output filename > "
 echo.
-set /p extension="- STEP 3: Which format? MP4 or MKV > "
+set /p extension="-STEP 3: Which format? MP4 or MKV > "
 REM set extension=mkv
 echo.
-set /p quality="- STEP 4: Quality biterate 2000 (Low) to 20000(High) > "
+echo  - Bitrate Table -------------------------------------------
+echo  Animation : Low details 1500 - 3500 High details - Anime
+echo       Film :     Low VFX 3500 - 6000 High VFX or High Action
+echo     Gaming :     Cartoon 4000 - 8000 Next-Gen VFX
+echo         4K :            10000 - 20000 Max Details
+echo.
+set /p quality="-STEP 4: Quality bitrate > "
 echo.
 echo ============================================================================
 echo.
@@ -36,21 +44,21 @@ if "%extstate%"=="false" (
 )
 
 :adjustment
-set /a quality=(%quality% / 1000) * 1024
+set /a quality=(%quality% * 1000) / 1024
 
 GOTO summary
 
 :summary
 cls
 echo ============================================================================
-echo SUMMARY
+echo  SUMMARY
 echo.
-echo      Source file : [ %source% ]
-echo          Save as : [ %output%.%extension% ]
-echo  Output location : [ %cd% ]
+echo      Source file : %source%
+echo          Save as : %output%.%extension%
+echo         Location : %cd%
 echo.
-echo       Video codec: [ H264 MPEG-4 AVC, %quality%Kbps ]
-echo       Audio codec: [ MPEG AAC 240k 44100kHz, channels same as source ]
+echo      Video codec : H264 MPEG-4 AVC, %quality%Kbps
+echo      Audio codec : AAC MPEG 240Kbps, sample rate and channel same as source
 echo.
 echo ============================================================================
 echo.
@@ -71,7 +79,7 @@ ffmpeg -loglevel warning -i %cd%\%source% -an -vcodec libx264 -pass 1 -preset ve
 echo.
 echo ============================================================================
 echo.
-echo  PASS-2 conversion in progress, please wait or press Q once more to cancel.
+echo  PASS-2 conversion in progress, please wait or press Q to cancel.
 echo.
 echo ============================================================================
 echo.
@@ -83,16 +91,16 @@ GOTO completed
 echo.
 
 :error
-echo SEE ERROR BELOW:
+echo  SEE ERROR BELOW:
 echo.
 if "%source%" == "" (
-echo Please locate the source video file.
+echo  Please locate the source video file.
 )
 if "%output%" == "" (
-echo Please type in the output filename.
+echo  Please type in the output filename.
 )
 if "%extstate%"=="false" (
-echo Please correct the value for the extension parameter.
+echo  Please correct the value for the extension parameter.
 )
 echo.
 echo ============================================================================
@@ -107,7 +115,8 @@ echo ===========================================================================
 echo.
 del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
-echo Conversion Completed at %DATE:/=-%@%TIME::=-%
+echo  Conversion Completed at %DATE:/=-%@%TIME::=-%
+echo  File location : %cd%\%output%.%extension%
 echo.
 pause
 cls
