@@ -18,11 +18,11 @@ echo.
 set /p extension="-STEP 3: Which format? MP4 or MKV > "
 REM set extension=mkv
 echo.
-echo  - Bitrate Table -------------------------------------------
+echo  - Bitrate Table ---------------------------------------------
 echo  Animation : Low details 1500 - 3500 High details - Anime
-echo       Film :     Low VFX 3500 - 6000 High VFX or High Action
-echo     Gaming :     Cartoon 4000 - 8000 Next-Gen VFX
-echo         4K :            10000 - 20000 Max Details
+echo       Film :     Low VFX 2500 - 4000 High VFX or High Action
+echo     Gaming :       Indie 5000 - 10000 Next-Gen VFX FPS MMO RPG
+echo         4K :            15000 - 30000 Max Details
 echo.
 set /p quality="-STEP 4: Quality bitrate > "
 echo.
@@ -44,7 +44,7 @@ if "%extstate%"=="false" (
 )
 
 :adjustment
-set /a quality=(%quality% * 1000) / 1024
+set /a quality=(%quality% * 1024) / 1000
 
 GOTO summary
 
@@ -57,7 +57,7 @@ echo      Source file : %source%
 echo          Save as : %output%.%extension%
 echo         Location : %cd%
 echo.
-echo      Video codec : H264 MPEG-4 AVC, %quality%Kbps
+echo      Video codec : H264 MPEG-4 AVC, Average ~%quality%%Kbps
 echo      Audio codec : AAC MPEG 240Kbps, sample rate and channel same as source
 echo.
 echo ============================================================================
