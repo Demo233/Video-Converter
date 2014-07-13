@@ -2,8 +2,12 @@
 :start
 echo ============================================================================
 echo.
-echo 	High Compression Video Converter x264-MKV/MP4
-echo 	Version 0.7 by Kevin C.H.I.
+echo    High Compression Video Converter x264-MKV/MP4
+echo    Version 0.9 beta by Kevin C.H.I.
+echo.
+echo    Notes:
+echo    - Video resolution is same as source
+echo    - Audio sample rate and channel are same as source
 echo.
 echo ============================================================================
 echo.
@@ -57,7 +61,7 @@ echo      Source file : %source%
 echo          Save as : %output%.%extension%
 echo         Location : %cd%
 echo.
-echo      Video codec : H264 MPEG-4 AVC, Average ~%quality%%Kbps
+echo      Video codec : H.264 MPEG-4 AVC, Average ~%quality%%Kbps,
 echo      Audio codec : AAC MPEG 240Kbps, sample rate and channel same as source
 echo.
 echo ============================================================================
