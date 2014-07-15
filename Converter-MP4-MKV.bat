@@ -3,11 +3,17 @@
 echo ============================================================================
 echo.
 echo    High Compression Video Converter x264-MKV/MP4
-echo    Version 0.9 beta by Kevin C.H.I.
+echo    Version 0.9.2 beta by Kevin C.H.I.
 echo.
-echo    Notes:
+echo    NOTES:
+echo.
 echo    - Video resolution is same as source
 echo    - Audio sample rate and channel are same as source
+echo.
+echo    IMPORTANT (Filename bug, will be fixed in the future):
+echo.
+echo    - Please rename your source file to a simple name without space or
+echo      special characters suchs as _ - . and etc.
 echo.
 echo ============================================================================
 echo.
@@ -22,11 +28,12 @@ echo.
 set /p extension="-STEP 3: Which format? MP4 or MKV > "
 REM set extension=mkv
 echo.
-echo  - Bitrate Table ---------------------------------------------
-echo  Animation : Low details 1500 - 3500 High details - Anime
-echo       Film :     Low VFX 2500 - 4000 High VFX or High Action
-echo     Gaming :       Indie 5000 - 10000 Next-Gen VFX FPS MMO RPG
-echo         4K :            15000 - 30000 Max Details
+echo  - Bitrate Table ----------------------------------------------------------
+echo  Animation : Low resolution 1000 - 2000 High resolution - Desktop Recording
+echo  Animation :    Low details 1500 - 3500 High details - Anime
+echo       Film :        Low VFX 2500 - 4000 High VFX or High Action
+echo     Gaming :          Indie 5000 - 10000 Next-Gen VFX FPS MMO RPG
+echo         4K :               15000 - 30000 Max Details
 echo.
 set /p quality="-STEP 4: Quality bitrate > "
 echo.
