@@ -1,7 +1,7 @@
 Video-Converter
 ===============
 
-Batch Tool for Video - Convert to x264 MP4/MKV
+Batch Tool for Video - Convert to x264 MKV
 
 
 Must have FFMPEG installed: http://ffmpeg.zeranoe.com/builds/
