@@ -1,10 +1,11 @@
 @echo off
 setlocal
 :start
+cls
 echo ============================================================================
 echo.
 echo    High Compression Video Converter x264-MKV
-echo    Version 0.9.9 beta by Kevin C.H.I.
+echo    Version 1.0.0 beta by Kevin C.H.I.
 echo.
 echo    NOTES:
 echo.
@@ -13,16 +14,27 @@ echo    - Audio sample rate and channel are same as source
 echo.
 echo ============================================================================
 echo.
-set /p mode="File Mode: Single (1) or Multiple (2) > "
+echo  1 - Single File Mode
+echo  2 - Multiple File Mode
+echo  3 - Delete Multiple File Mode
+echo.
+set /p mode="- Select Mode: > "
+if "%mode%" == "" (
+echo.
+echo  ERROR : Please select a file mode.
+echo.
+pause
+GOTO start
+)
 cls
 echo ============================================================================
 echo.
-if "%mode%" == "" GOTO error
-if "%mode%" == "1" GOTO single setting
-if "%mode%" == "2" GOTO multi setting
+if "%mode%" == "1" GOTO singlesetting
+if "%mode%" == "2" GOTO multisetting
+if "%mode%" == "3" GOTO deletesetting
 echo.
 
-:single setting
+:singlesetting
 cls
 echo ============================================================================
 echo.
@@ -30,7 +42,14 @@ echo  SINGLE FILE MODE SETTING
 echo.
 echo  Current Directory : "%cd%"
 echo.
-set /p src="-STEP 1: Source video file > "
+set /p src="- Which source video file? > "
+if "%src%" == "" (
+echo.
+echo  ERROR : Please type in the source video file name with extension.
+echo.
+pause
+GOTO singlesetting
+)
 REM echo.
 REM set /p op="-STEP 2: Output filename > "
 echo.
@@ -44,15 +63,20 @@ echo       Film :        Low VFX 2500 - 4000 High VFX or High Action
 echo     Gaming :          Indie 5000 - 10000 Next-Gen VFX FPS MMO RPG
 echo         4K :               15000 - 30000 Max Details
 echo.
-set /p quality="-STEP 2: Quality bitrate > "
+set /p quality="- Quality bitrate > "
+if "%quality%" == "" (
+echo.
+echo  ERROR : Please set the bitrate.
+echo.
+pause
+GOTO singlesetting
+)
 cls
 echo ============================================================================
 echo.
-set extstate=false
-if /i "%quality%" == "" GOTO error
 GOTO single
 
-:multi start
+:multisetting
 cls
 echo ============================================================================
 echo.
@@ -60,7 +84,14 @@ echo  MULTIPLE FILE MODE SETTING
 echo.
 echo  Current Directory : "%cd%"
 echo.
-set /p filter="-STEP 1: Which extension to convert > "
+set /p filter="- Which extension to convert? > "
+if "%filter%" == "" (
+echo.
+echo  ERROR : Please type in the extension.
+echo.
+pause
+GOTO multisetting
+)
 echo.
 REM set /p extension="-STEP 3: Which format? MP4 or MKV > "
 set extension=mkv
@@ -72,13 +103,41 @@ echo       Film :        Low VFX 2500 - 4000 High VFX or High Action
 echo     Gaming :          Indie 5000 - 10000 Next-Gen VFX FPS MMO RPG
 echo         4K :               15000 - 30000 Max Details
 echo.
-set /p quality="-STEP 2: Quality bitrate > "
+set /p quality="- Quality bitrate > "
+if "%quality%" == "" (
+echo.
+echo  ERROR : Please set the bitrate.
+echo.
+pause
+GOTO multisetting
+)
+)
 cls
 echo ============================================================================
 echo.
-set extstate=false
-if /i "%quality%" == "" GOTO error
 GOTO multi
+
+:deletesetting
+cls
+echo ============================================================================
+echo.
+echo  MULTIPLE FILE MODE SETTING
+echo.
+echo  Current Directory : "%cd%"
+echo.
+set /p filter="- Which extension to delete? > "
+if "%filter%" == "" (
+echo.
+echo  ERROR : Please type in the extension.
+echo.
+pause
+GOTO deletesetting
+)
+echo.
+cls
+echo ============================================================================
+echo.
+GOTO delete
 
 :single
 cls
@@ -101,7 +160,7 @@ echo.
 echo ============================================================================
 echo.
 pause
-GOTO single execute
+GOTO singleexecute
 
 :multi
 cls
@@ -112,10 +171,10 @@ echo.
 echo             Mode : Multiple files
 echo           Filter : %filter%
 echo         Location : "%cd%\"
-echo          Save as : 
+echo       To convert : 
 if "%dir%" == "" (
 for /r %%A in (*.%filter%) do (
-echo                    "%%~dpnA.%extension%"
+echo                    "%%~dpnA.%filter%"
 ))
 echo.
 echo      Video codec : H.264 MPEG-4 AVC, Average ~%quality%%Kbps,
@@ -124,9 +183,31 @@ echo.
 echo ============================================================================
 echo.
 pause
-GOTO multi execute
+GOTO multiexecute
 
-:single execute
+:delete
+cls
+set /a quality=(%quality% * 1024) / 1000
+echo ============================================================================
+echo  SUMMARY
+echo.
+echo             Mode : Delete multiple files
+echo           Filter : %filter%
+echo         Location : "%cd%\"
+echo        To delete : 
+if "%dir%" == "" (
+for /r %%A in (*.%filter%) do (
+echo                    "%%~dpnA.%filter%"
+))
+echo.
+echo ============================================================================
+echo.
+pause
+GOTO deleteexecute
+
+:singleexecute
+cls
+echo ============================================================================
 echo.
 echo  To Cancel or Skip, press Q.
 echo.
@@ -140,12 +221,14 @@ del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
 GOTO completed
 
-
-:multi execute
-if "%dir%" == "" (
-for /r %%A in (*.%filter%) do (
+:multiexecute
+cls
+echo ============================================================================
+echo.
 echo  To Cancel or Skip, press Q.
 echo.
+if "%dir%" == "" (
+for /r %%A in (*.%filter%) do (
 echo  Converting : %%A
 echo  PASS-1 conversion in progress, please wait.
 ffmpeg -loglevel quiet -i "%%A" -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=1:fast_pskip=0:keyint=24:min-keyint=2:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid:partitions=none:no-dct-decimate -f rawvideo -y NUL
@@ -158,31 +241,24 @@ del "ffmpeg2pass-0.log.mbtree" /q
 )
 GOTO completed
 
+:deleteexecute
+cls
+echo ============================================================================
 echo.
+if "%dir%" == "" (
+for /r %%A in (*.%filter%) do (
+echo  Deleted : %%A
+del %%A /q
+)
+)
+echo.
+GOTO completed
 
 :completed
 echo.
 echo ============================================================================
 echo.
-echo  Conversion Completed at %DATE:/=-%@%TIME::=-%
+echo  Tasks completed at %DATE:/=-% @ %TIME::=-%
 echo.
 pause
-cls
-GOTO start
-
-
-:error
-echo  SEE ERROR BELOW:
-echo.
-if "%mode%" == "" (
-echo  Please set the file mode.
-)
-if "%quality%" == "" (
-echo  Please set the quality.
-)
-echo.
-echo ============================================================================
-echo.
-pause
-cls
 GOTO start
