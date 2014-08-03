@@ -2,9 +2,9 @@
 :start
 setlocal EnableDelayedExpansion
 :: Batch Information
-set title=HCVC
-set longtitle=High Compression Video Converter x264-MKV
-set version=1.0.6 beta
+set title=HCVT
+set longtitle=High Compression Video Transcoder
+set version=1.0.7 beta
 set author=Kevin C.H.I.
 set devdate=20140803
 
@@ -18,6 +18,7 @@ echo    Author: %author%
 echo.
 echo    Notes:
 echo.
+echo    - Default x264-MKV, H.264 MPEG-4 AVC, High L4.1+
 echo    - Video resolution is same as source
 echo    - Audio sample rate and channel are same as source
 echo.
