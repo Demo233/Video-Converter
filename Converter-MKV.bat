@@ -4,7 +4,7 @@ setlocal EnableDelayedExpansion
 :: Batch Information
 set title=HCVC
 set longtitle=High Compression Video Converter x264-MKV
-set version=1.0.5 beta
+set version=1.0.6 beta
 set author=Kevin C.H.I.
 set devdate=20140803
 
@@ -78,7 +78,7 @@ set extension=mkv
 echo.
 echo  - Bitrate Table --------------------------------------------------------------
 echo  Recording : Low resolution 1000 - 2000 High resolution - Desktop Recording
-echo  Animation :     Low details 500 - 3500 High details - Anime
+echo  Animation :     Low details 300 - 3500 High details - Anime
 echo       Film :        Low VFX 2500 - 4000 High VFX or High Action
 echo     Gaming :          Indie 5000 - 10000 Next-Gen VFX FPS MMO RPG
 echo         4K :               15000 - 30000 Max Details
@@ -120,7 +120,7 @@ set extension=mkv
 echo.
 echo  - Bitrate Table --------------------------------------------------------------
 echo  Recording : Low resolution 1000 - 2000 High resolution - Desktop Recording
-echo  Animation :     Low details 500 - 3500 High details - Anime
+echo  Animation :     Low details 300 - 3500 High details - Anime
 echo       Film :        Low VFX 2500 - 4000 High VFX or High Action
 echo     Gaming :          Indie 5000 - 10000 Next-Gen VFX FPS MMO RPG
 echo         4K :               15000 - 30000 Max Details
