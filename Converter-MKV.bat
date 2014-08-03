@@ -1,5 +1,5 @@
 @echo off
-setlocal ENABLEDELAYEDEXPANSION
+setlocal EnableDelayedExpansion
 
 :start
 cls
@@ -15,9 +15,9 @@ echo    - Audio sample rate and channel are same as source
 echo.
 echo ============================================================================
 echo.
-echo  1 - Single File Mode
-echo  2 - Multiple File Mode
-echo  3 - Delete Multiple File Mode
+echo    1 - Single File Mode
+echo    2 - Multiple File Mode
+echo    3 - Delete Multiple File Mode
 echo.
 set /p mode="- Select Mode: > "
 if "%mode%" == "" (
@@ -47,14 +47,14 @@ set /p dir="- Set folder > "
 pushd %dir%
 echo.
 set /p src="- Which source video file? > "
-set src=%src:"=%
 if "%src%" == "" (
 echo.
 echo  ERROR : Please type in the source video file name with extension.
 echo.
 pause
-REM GOTO singlesetting
+GOTO singlesetting
 )
+set src=%src:"=%
 REM echo.
 REM set /p op="-STEP 2: Output filename > "
 echo.
