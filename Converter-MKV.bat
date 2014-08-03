@@ -4,7 +4,7 @@ setlocal EnableDelayedExpansion
 :: Batch Information
 set title=HCVC
 set longtitle=High Compression Video Converter x264-MKV
-set version=1.0.4 beta
+set version=1.0.5 beta
 set author=Kevin C.H.I.
 set devdate=20140803
 
@@ -28,20 +28,22 @@ echo    2 - Multiple File Mode
 echo    3 - Delete Multiple File Mode
 echo.
 set /p mode="- Select Mode: > "
-if "%mode%" == "" (
-echo.
-echo  ERROR : Please select a file mode.
-echo.
-pause
-GOTO start
+set state=false
+if /i "%mode%" == "1" set state=true
+if /i "%mode%" == "2" set state=true
+if /i "%mode%" == "3" set state=true
+if "%state%"=="true" (
+	if "%mode%" == "1" GOTO singlesetting
+	if "%mode%" == "2" GOTO multisetting
+	if "%mode%" == "3" GOTO deletesetting
 )
-cls
-echo ===============================================================================
-echo.
-if "%mode%" == "1" GOTO singlesetting
-if "%mode%" == "2" GOTO multisetting
-if "%mode%" == "3" GOTO deletesetting
-echo.
+if "%state%"=="false" (
+	echo.
+	echo  ERROR: Please select a file mode.
+	echo.
+	pause
+	GOTO start
+)
 
 :singlesetting
 cls
@@ -62,7 +64,7 @@ set src=%src:"=%
 GOTO singlenext
 ) 
 echo.
-echo  ERROR : Please type in the source video file name with extension.
+echo  ERROR: Please type in the source video file name with extension.
 echo.
 pause
 GOTO singlesetting
@@ -74,7 +76,7 @@ echo.
 :singlenext
 set extension=mkv
 echo.
-echo  - Bitrate Table ---------------------------------------------------------------
+echo  - Bitrate Table --------------------------------------------------------------
 echo  Recording : Low resolution 1000 - 2000 High resolution - Desktop Recording
 echo  Animation :     Low details 500 - 3500 High details - Anime
 echo       Film :        Low VFX 2500 - 4000 High VFX or High Action
@@ -84,14 +86,11 @@ echo.
 set /p quality="- Quality bitrate > "
 if "%quality%" == "" (
 echo.
-echo  ERROR : Please set the bitrate.
+echo  ERROR: Please set the bitrate.
 echo.
 pause
 GOTO singlesetting
 )
-cls
-echo ===============================================================================
-echo.
 GOTO single
 
 :multisetting
@@ -110,7 +109,7 @@ echo.
 set /p filter="- Which extension to convert? > "
 if "%filter%" == "" (
 echo.
-echo  ERROR : Please type in the extension.
+echo  ERROR: Please type in the extension.
 echo.
 pause
 GOTO multisetting
@@ -119,7 +118,7 @@ echo.
 :: set /p extension="-STEP 3: Which format? MP4 or MKV > "
 set extension=mkv
 echo.
-echo  - Bitrate Table ----------------------------------------------------------
+echo  - Bitrate Table --------------------------------------------------------------
 echo  Recording : Low resolution 1000 - 2000 High resolution - Desktop Recording
 echo  Animation :     Low details 500 - 3500 High details - Anime
 echo       Film :        Low VFX 2500 - 4000 High VFX or High Action
@@ -129,15 +128,12 @@ echo.
 set /p quality="- Quality bitrate > "
 if "%quality%" == "" (
 echo.
-echo  ERROR : Please set the bitrate.
+echo  ERROR: Please set the bitrate.
 echo.
 pause
 GOTO multisetting
 )
 )
-cls
-echo ===============================================================================
-echo.
 GOTO multi
 
 :deletesetting
@@ -156,14 +152,11 @@ echo.
 set /p filter="- Which extension to delete? > "
 if "%filter%" == "" (
 echo.
-echo  ERROR : Please type in the extension.
+echo  ERROR: Please type in the extension.
 echo.
 pause
 GOTO deletesetting
 )
-echo.
-cls
-echo ===============================================================================
 echo.
 GOTO delete
 
@@ -189,23 +182,38 @@ echo      Audio codec : AAC MPEG 240Kbps, sample rate and channel same as source
 echo.
 echo ===============================================================================
 echo.
-echo    Hit ENTER key once to start the conversion
-echo    1 - Correction
-echo    2 - Cancel and start over
+echo    1 - Continue
+echo    2 - Correction
+echo    3 - Cancel and start over
 echo.
 set /p choice="- Select Choice: > "
-if "%choice%" == "1" (
-set choice=
-set dir=
-set src=
-set quality=
-GOTO singlesetting
+set state=false
+if /i "%choice%" == "1" set state=true
+if /i "%choice%" == "2" set state=true
+if /i "%choice%" == "3" set state=true
+if "%state%"=="true" (
+	if "%choice%" == "1" (
+		GOTO singleexecute
+	)
+	if "%choice%" == "2" (
+		set choice=
+		set dir=
+		set src=
+		set quality=
+		GOTO singlesetting
+	)
+	if "%choice%" == "3" (
+	endlocal
+	GOTO start
+	)
 )
-if "%choice%" == "2" (
-endlocal
-GOTO start
+if "%state%"=="false" (
+	echo.
+	echo  ERROR: Please make a choice.
+	echo.
+	pause
+	GOTO single
 )
-GOTO singleexecute
 
 :multi
 cls
@@ -229,23 +237,38 @@ echo      Audio codec : AAC MPEG 240Kbps, sample rate and channel same as source
 echo.
 echo ===============================================================================
 echo.
-echo    Hit ENTER key once to start the conversion
-echo    1 - Correction
-echo    2 - Cancel and start over
+echo    1 - Continue
+echo    2 - Correction
+echo    3 - Cancel and start over
 echo.
 set /p choice="- Select Choice: > "
-if "%choice%" == "1" (
-set choice=
-set dir=
-set filter=
-set quality=
-GOTO singlesetting
+set state=false
+if /i "%choice%" == "1" set state=true
+if /i "%choice%" == "2" set state=true
+if /i "%choice%" == "3" set state=true
+if "%state%"=="true" (
+	if "%choice%" == "1" (
+		GOTO multiexecute
+	)
+	if "%choice%" == "2" (
+		set choice=
+		set dir=
+		set filter=
+		set quality=
+		GOTO multisetting
+	)
+	if "%choice%" == "3" (
+	endlocal
+	GOTO start
+	)
 )
-if "%choice%" == "2" (
-endlocal
-GOTO start
+if "%state%"=="false" (
+	echo.
+	echo  ERROR: Please make a choice.
+	echo.
+	pause
+	GOTO multi
 )
-GOTO multiexecute
 
 :delete
 cls
@@ -267,23 +290,38 @@ echo.
 echo ===============================================================================
 echo ===============================================================================
 echo.
-echo    Hit ENTER key once to start delete process
-echo    1 - Correction
-echo    2 - Cancel and start over
+echo    1 - Continue
+echo    2 - Correction
+echo    3 - Cancel and start over
 echo.
 set /p choice="- Select Choice: > "
-if "%choice%" == "1" (
-set choice=
-set dir=
-set filter=
-set quality=
-GOTO singlesetting
+set state=false
+if /i "%choice%" == "1" set state=true
+if /i "%choice%" == "2" set state=true
+if /i "%choice%" == "3" set state=true
+if "%state%"=="true" (
+	if "%choice%" == "1" (
+		GOTO deleteexecute
+	)
+	if "%choice%" == "2" (
+		set choice=
+		set dir=
+		set filter=
+		set quality=
+		GOTO deletesetting
+	)
+	if "%choice%" == "3" (
+	endlocal
+	GOTO start
+	)
 )
-if "%choice%" == "2" (
-endlocal
-GOTO start
+if "%state%"=="false" (
+	echo.
+	echo  ERROR: Please make a choice.
+	echo.
+	pause
+	GOTO delete
 )
-GOTO deleteexecute
 
 :singleexecute
 cls
@@ -293,14 +331,14 @@ echo ===========================================================================
 echo.
 echo  Conversion in progress, please wait.
 echo  To Cancel or Skip, press Q.
-echo                                                  Process start - !time!
+echo                                                     Process start - !time!
 echo.
-echo  [1/1] Working : %source%
+echo  [1/1] Working: %source%
 ffmpeg -loglevel quiet -i %source% -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=1:fast_pskip=0:keyint=24:min-keyint=2:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid:partitions=none:no-dct-decimate -f rawvideo -y NUL
 ffmpeg -loglevel quiet -y -i %source% -strict experimental -c:a aac -b:a 240k -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=4:fast_pskip=0:keyint=24:min-keyint=2:me=umh:trellis=1:bframes=3:subme=7:vbv-maxrate=40000:vbv-bufsize=30000:direct=auto:b-pyramid:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange %output%
 del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
-echo                                                           Done - !time!
+echo                                                              Done - !time!
 echo.
 GOTO completed
 
@@ -312,7 +350,7 @@ echo ===========================================================================
 echo.
 echo  Conversion in progress, please wait.
 echo  To Cancel or Skip, press Q.
-echo                                                  Process start - !time!
+echo                                                     Process start - !time!
 echo.
 set /a total=0
 for /r %%A in (*.%filter%) do (
@@ -326,7 +364,7 @@ ffmpeg -loglevel quiet -y -i "%%~dpnxA" -an -vcodec libx264 -pass 1 -preset very
 ffmpeg -loglevel quiet -y -i "%%~dpnxA" -strict experimental -c:a aac -b:a 240k -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=4:fast_pskip=0:keyint=24:min-keyint=2:me=umh:trellis=1:bframes=3:subme=7:vbv-maxrate=40000:vbv-bufsize=30000:direct=auto:b-pyramid:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange "%%~dpnA.%extension%"
 del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
-echo                                                           Done - !time!
+echo                                                              Done - !time!
 echo.
 )
 GOTO completed
@@ -338,7 +376,7 @@ echo  %title% v%version% %devdate% by %author%
 echo ===============================================================================
 echo.
 echo  Delete in progress, please wait.
-echo                                                  Process start - !time!
+echo                                                     Process start - !time!
 echo.
 set /a total=0
 for /r %%A in (*.%filter%) do (
@@ -349,7 +387,7 @@ for /r %%A in (*.%filter%) do (
 set /a current=current+1
 echo  [!current!/%total%] Deleting: %%~nxA
 del "%%A" /q
-echo                                                           Done - !time!
+echo                                                              Done - !time!
 echo.
 )
 GOTO completed
@@ -357,7 +395,7 @@ GOTO completed
 :completed
 echo ===============================================================================
 echo.
-echo                                  Tasks completed at %DATE% - %TIME%
+echo                                     Tasks completed at %DATE% - %TIME%
 echo.
 popd
 pause
