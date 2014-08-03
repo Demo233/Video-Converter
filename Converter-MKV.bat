@@ -1,11 +1,12 @@
 @echo off
-setlocal
+setlocal ENABLEDELAYEDEXPANSION
+
 :start
 cls
 echo ============================================================================
 echo.
 echo    High Compression Video Converter x264-MKV
-echo    Version 1.0.2 beta by Kevin C.H.I.
+echo    Version 1.0.3 beta by Kevin C.H.I.
 echo.
 echo    NOTES:
 echo.
@@ -216,33 +217,39 @@ GOTO deleteexecute
 cls
 echo ============================================================================
 echo.
+echo  Conversion in progress, please wait.
 echo  To Cancel or Skip, press Q.
 echo.
-echo  Converting : %source%
-echo  PASS-1 conversion in progress, please wait.
+echo  [1/1] Working : %source%
 ffmpeg -loglevel quiet -i %source% -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=1:fast_pskip=0:keyint=24:min-keyint=2:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid:partitions=none:no-dct-decimate -f rawvideo -y NUL
-echo  PASS-2 conversion in progress, please wait.
-ffmpeg -loglevel quiet -i %source% -strict experimental -c:a aac -b:a 240k -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=4:fast_pskip=0:keyint=24:min-keyint=2:me=umh:trellis=1:bframes=3:subme=7:vbv-maxrate=40000:vbv-bufsize=30000:direct=auto:b-pyramid:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange %output%
-echo.
+ffmpeg -loglevel quiet -y -i %source% -strict experimental -c:a aac -b:a 240k -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=4:fast_pskip=0:keyint=24:min-keyint=2:me=umh:trellis=1:bframes=3:subme=7:vbv-maxrate=40000:vbv-bufsize=30000:direct=auto:b-pyramid:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange %output%
 del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
+echo        Done
+echo.
 GOTO completed
 
 :multiexecute
 cls
 echo ============================================================================
 echo.
+echo  Conversion in progress, please wait.
 echo  To Cancel or Skip, press Q.
 echo.
+set /a total=0
 for /r %%A in (*.%filter%) do (
-echo  Converting : %%~nxA
-echo  PASS-1 conversion in progress, please wait.
-ffmpeg -loglevel quiet -i "%%~dpnxA" -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=1:fast_pskip=0:keyint=24:min-keyint=2:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid:partitions=none:no-dct-decimate -f rawvideo -y NUL
-echo  PASS-2 conversion in progress, please wait.
-ffmpeg -loglevel quiet -i "%%~dpnxA" -strict experimental -c:a aac -b:a 240k -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=4:fast_pskip=0:keyint=24:min-keyint=2:me=umh:trellis=1:bframes=3:subme=7:vbv-maxrate=40000:vbv-bufsize=30000:direct=auto:b-pyramid:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange "%%~dpnA.%extension%"
-echo.
+set /a total=total+1
+)
+set /a current=0
+for /r %%A in (*.%filter%) do (
+set /a current=current+1
+echo  [!current!/%total%] Working: %%~nxA
+ffmpeg -loglevel quiet -y -i "%%~dpnxA" -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=1:fast_pskip=0:keyint=24:min-keyint=2:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid:partitions=none:no-dct-decimate -f rawvideo -y NUL
+ffmpeg -loglevel quiet -y -i "%%~dpnxA" -strict experimental -c:a aac -b:a 240k -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=4:fast_pskip=0:keyint=24:min-keyint=2:me=umh:trellis=1:bframes=3:subme=7:vbv-maxrate=40000:vbv-bufsize=30000:direct=auto:b-pyramid:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange "%%~dpnA.%extension%"
 del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
+echo        Done
+echo.
 )
 GOTO completed
 
@@ -250,15 +257,23 @@ GOTO completed
 cls
 echo ============================================================================
 echo.
-for /r %%A in (*.%filter%) do (
-echo  Deleted : %%~nxA
-del "%%A" /q
-)
+echo  Delete in progress, please wait.
 echo.
+set /a total=0
+for /r %%A in (*.%filter%) do (
+set /a total=total+1
+)
+set /a current=0
+for /r %%A in (*.%filter%) do (
+set /a current=current+1
+echo  [!current!/%total%] Deleting: %%~nxA
+del "%%A" /q
+echo        Deleted
+echo.
+)
 GOTO completed
 
 :completed
-echo.
 echo ============================================================================
 echo.
 echo  Tasks completed at %DATE:/=-% @ %TIME::=-%
