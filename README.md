@@ -1,7 +1,7 @@
-Video-Converter
+HCVT
 ===============
 
-Batch Tool for Video - Convert to x264 MKV
+High Compression Video Transcoder
 
 
 Must have FFMPEG installed: http://ffmpeg.zeranoe.com/builds/
