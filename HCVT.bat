@@ -4,9 +4,9 @@ setlocal EnableDelayedExpansion
 :: Batch Information
 set title=HCVT
 set longtitle=High Compression Video Transcoder
-set version=1.0.7 beta
+set version=1.0.8 beta
 set author=Kevin C.H.I.
-set devdate=20140803
+set devdate=20140808
 
 cls
 echo ===============================================================================
@@ -18,7 +18,7 @@ echo    Author: %author%
 echo.
 echo    Notes:
 echo.
-echo    - Default x264-MKV, H.264 MPEG-4 AVC, High L4.1+
+echo    - Default x264 H.264 MPEG-4 AVC, High L4.1+
 echo    - Video resolution is same as source
 echo    - Audio sample rate and channel are same as source
 echo.
@@ -75,7 +75,7 @@ echo.
 :: set /p extension="-STEP 3: Which format? MP4 or MKV > "
 
 :singlenext
-set extension=mkv
+set extension=mp4
 echo.
 echo  - Bitrate Table --------------------------------------------------------------
 echo  Recording : Low resolution 1000 - 2000 High resolution - Desktop Recording
@@ -117,7 +117,7 @@ GOTO multisetting
 )
 echo.
 :: set /p extension="-STEP 3: Which format? MP4 or MKV > "
-set extension=mkv
+set extension=mp4
 echo.
 echo  - Bitrate Table --------------------------------------------------------------
 echo  Recording : Low resolution 1000 - 2000 High resolution - Desktop Recording
@@ -335,8 +335,8 @@ echo  To Cancel or Skip, press Q.
 echo                                                     Process start - !time!
 echo.
 echo  [1/1] Working: %source%
-ffmpeg -loglevel quiet -i %source% -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=1:fast_pskip=0:keyint=24:min-keyint=2:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid:partitions=none:no-dct-decimate -f rawvideo -y NUL
-ffmpeg -loglevel quiet -y -i %source% -strict experimental -c:a aac -b:a 240k -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=4:fast_pskip=0:keyint=24:min-keyint=2:me=umh:trellis=1:bframes=3:subme=7:vbv-maxrate=40000:vbv-bufsize=30000:direct=auto:b-pyramid:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange %output%
+ffmpeg -loglevel error -i %source% -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -movflags +faststart -x264opts frameref=1:fast_pskip=0:keyint=250:min-keyint=23:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid=2:partitions=none:no-dct-decimate:threads=60:lookahead_threads=5:rc_lookahead=60 -f rawvideo -y NUL
+ffmpeg -loglevel error -y -i %source% -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -strict experimental -c:a aac -q:a 6 -movflags +faststart -x264opts frameref=4:fast_pskip=0:keyint=250:min-keyint=23:me=umh:trellis=1:bframes=3:subme=9:vbv-maxrate=31250:vbv-bufsize=31250:direct=auto:b-pyramid=2:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange:threads=60:lookahead_threads=5:rc_lookahead=60 %output%
 del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
 echo                                                              Done - !time!
@@ -361,8 +361,8 @@ set /a current=0
 for /r %%A in (*.%filter%) do (
 set /a current=current+1
 echo  [!current!/%total%] Working: %%~nxA
-ffmpeg -loglevel quiet -y -i "%%~dpnxA" -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=1:fast_pskip=0:keyint=24:min-keyint=2:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid:partitions=none:no-dct-decimate -f rawvideo -y NUL
-ffmpeg -loglevel quiet -y -i "%%~dpnxA" -strict experimental -c:a aac -b:a 240k -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -threads 0 -b:v %quality%k -x264opts frameref=4:fast_pskip=0:keyint=24:min-keyint=2:me=umh:trellis=1:bframes=3:subme=7:vbv-maxrate=40000:vbv-bufsize=30000:direct=auto:b-pyramid:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange "%%~dpnA.%extension%"
+ffmpeg -loglevel error -i "%%~dpnxA" -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -movflags +faststart -x264opts frameref=1:fast_pskip=0:keyint=250:min-keyint=23:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid=2:partitions=none:no-dct-decimate:threads=60:lookahead_threads=5:rc_lookahead=60 -f rawvideo -y NUL
+ffmpeg -loglevel error -y -i "%%~dpnxA" -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -strict experimental -c:a aac -q:a 6 -movflags +faststart -x264opts frameref=4:fast_pskip=0:keyint=250:min-keyint=23:me=umh:trellis=1:bframes=3:subme=9:vbv-maxrate=31250:vbv-bufsize=31250:direct=auto:b-pyramid=2:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange:threads=60:lookahead_threads=5:rc_lookahead=60 "%%~dpnA.%extension%"
 del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
 echo                                                              Done - !time!
