@@ -4,9 +4,9 @@ setlocal EnableDelayedExpansion
 :: Batch Information
 set title=HCVT
 set longtitle=High Compression Video Transcoder
-set version=1.0.8 beta
+set version=1.0.9 beta
 set author=Kevin C.H.I.
-set devdate=20140808
+set devdate=20140823
 
 cls
 echo ===============================================================================
@@ -336,7 +336,7 @@ echo                                                     Process start - !time!
 echo.
 echo  [1/1] Working: %source%
 ffmpeg -loglevel error -i %source% -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -movflags +faststart -x264opts frameref=1:fast_pskip=0:keyint=250:min-keyint=23:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid=2:partitions=none:no-dct-decimate:threads=60:lookahead_threads=5:rc_lookahead=60 -f rawvideo -y NUL
-ffmpeg -loglevel error -y -i %source% -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -strict experimental -c:a aac -q:a 6 -movflags +faststart -x264opts frameref=4:fast_pskip=0:keyint=250:min-keyint=23:me=umh:trellis=1:bframes=3:subme=9:vbv-maxrate=31250:vbv-bufsize=31250:direct=auto:b-pyramid=2:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange:threads=60:lookahead_threads=5:rc_lookahead=60 %output%
+ffmpeg -loglevel error -y -i %source% -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -strict experimental -c:a aac -b:a 202k -movflags +faststart -x264opts frameref=4:fast_pskip=0:keyint=250:min-keyint=23:me=umh:trellis=1:bframes=3:subme=9:vbv-maxrate=31250:vbv-bufsize=31250:direct=auto:b-pyramid=2:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange:threads=60:lookahead_threads=5:rc_lookahead=60 %output%
 del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
 echo                                                              Done - !time!
@@ -362,7 +362,7 @@ for /r %%A in (*.%filter%) do (
 set /a current=current+1
 echo  [!current!/%total%] Working: %%~nxA
 ffmpeg -loglevel error -i "%%~dpnxA" -an -vcodec libx264 -pass 1 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -movflags +faststart -x264opts frameref=1:fast_pskip=0:keyint=250:min-keyint=23:me=dia:trellis=1:bframes=3:subme=3:direct=auto:b-pyramid=2:partitions=none:no-dct-decimate:threads=60:lookahead_threads=5:rc_lookahead=60 -f rawvideo -y NUL
-ffmpeg -loglevel error -y -i "%%~dpnxA" -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -strict experimental -c:a aac -q:a 6 -movflags +faststart -x264opts frameref=4:fast_pskip=0:keyint=250:min-keyint=23:me=umh:trellis=1:bframes=3:subme=9:vbv-maxrate=31250:vbv-bufsize=31250:direct=auto:b-pyramid=2:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange:threads=60:lookahead_threads=5:rc_lookahead=60 "%%~dpnA.%extension%"
+ffmpeg -loglevel error -y -i "%%~dpnxA" -vcodec libx264 -pass 2 -preset veryslow -profile:v high -level 4.1 -b:v %quality%k -strict experimental -c:a aac -b:a 202k -movflags +faststart -x264opts frameref=4:fast_pskip=0:keyint=250:min-keyint=23:me=umh:trellis=1:bframes=3:subme=9:vbv-maxrate=31250:vbv-bufsize=31250:direct=auto:b-pyramid=2:partitions=p8x8,b8x8,i4x4,i8x8:8x8dct:weightb:mixed-refs:mvrange:threads=60:lookahead_threads=5:rc_lookahead=60 "%%~dpnA.%extension%"
 del "ffmpeg2pass-0.log" /q
 del "ffmpeg2pass-0.log.mbtree" /q
 echo                                                              Done - !time!
